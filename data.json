@@ -1,0 +1,93 @@
+{
+  "summary": {
+    "total_population": 206181,
+    "total_hombres": 102293,
+    "total_mujeres": 103888
+  },
+  "age_distribution": [
+    {
+      "age_group": "0 - 4 años",
+      "total": 17493,
+      "hombres": 8814,
+      "mujeres": 8679
+    },
+    {
+      "age_group": "5 - 9 años",
+      "total": 21167,
+      "hombres": 10807,
+      "mujeres": 10360
+    },
+    {
+      "age_group": "10 - 14 años",
+      "total": 20412,
+      "hombres": 10485,
+      "mujeres": 9927
+    },
+    {
+      "age_group": "15 - 19 años",
+      "total": 18636,
+      "hombres": 9258,
+      "mujeres": 9378
+    },
+    {
+      "age_group": "20 - 24 años",
+      "total": 16352,
+      "hombres": 7862,
+      "mujeres": 8490
+    },
+    {
+      "age_group": "25 - 29 años",
+      "total": 16352,
+      "hombres": 7861,
+      "mujeres": 8491
+    },
+    {
+      "age_group": "30 - 34 años",
+      "total": 16176,
+      "hombres": 7886,
+      "mujeres": 8290
+    },
+    {
+      "age_group": "35 - 39 años",
+      "total": 14418,
+      "hombres": 7201,
+      "mujeres": 7217
+    },
+    {
+      "age_group": "40 - 44 años",
+      "total": 12865,
+      "hombres": 6563,
+      "mujeres": 6302
+    },
+    {
+      "age_group": "45 - 49 años",
+      "total": 9804,
+      "hombres": 4950,
+      "mujeres": 4854
+    },
+    {
+      "age_group": "50 - 54 años",
+      "total": 9376,
+      "hombres": 4617,
+      "mujeres": 4759
+    },
+    {
+      "age_group": "55 - 59 años",
+      "total": 8231,
+      "hombres": 4028,
+      "mujeres": 4203
+    },
+    {
+      "age_group": "60 - 64 años",
+      "total": 7447,
+      "hombres": 3694,
+      "mujeres": 3753
+    },
+    {
+      "age_group": "65 y más años",
+      "total": 17452,
+      "hombres": 8267,
+      "mujeres": 9185
+    }
+  ]
+}

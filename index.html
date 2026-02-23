@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demografía Concepción - Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="glassmorphism">
+            <h1>📊 Demografía Concepción</h1>
+            <p>Proyecciones y Datos Censales 2022</p>
+        </header>
+
+        <!-- Key Metrics Cards -->
+        <section class="metrics-grid">
+            <div class="card metric-card glassmorphism float-anim">
+                <h3>Total Población</h3>
+                <h2 id="total-pop">...</h2>
+                <div class="icon">👥</div>
+            </div>
+            <div class="card metric-card glassmorphism float-anim" style="animation-delay: 0.1s;">
+                <h3>Total Hombres</h3>
+                <h2 id="total-hombres">...</h2>
+                <div class="progress-bar"><div id="bar-hombres" class="progress fill-m"></div></div>
+            </div>
+            <div class="card metric-card glassmorphism float-anim" style="animation-delay: 0.2s;">
+                <h3>Total Mujeres</h3>
+                <h2 id="total-mujeres">...</h2>
+                <div class="progress-bar"><div id="bar-mujeres" class="progress fill-f"></div></div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="charts-grid">
+            <!-- Population Pyramid -->
+            <div class="card chart-card glassmorphism">
+                <h3>Pirámide Poblacional por Edad y Sexo</h3>
+                <div class="chart-wrapper">
+                    <canvas id="pyramidChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Distribution Chart -->
+            <div class="card chart-card glassmorphism">
+                <h3>Distribución de Sexo</h3>
+                <div class="chart-wrapper">
+                    <canvas id="doughnutChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <footer class="glassmorphism">
+            <p>Datos extraídos de proyecciones demográficas del INE. Desarrollado para Paracel S.A.</p>
+        </footer>
+    </div>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>
