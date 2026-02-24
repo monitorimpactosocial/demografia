@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 2. Load Data
     try {
-        const response = await fetch('data.json');
+        // Prevent browser caching the old data.json by appending a timestamp query string
+        const response = await fetch('data.json?v=' + new Date().getTime());
         globalData = await response.json();
 
         // Initialize the first tab (General) by default
