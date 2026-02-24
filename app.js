@@ -1,5 +1,7 @@
 let globalData = null;
+let globalGeojson = null;
 let charts = {}; // Store chart instances to destroy/update later if needed
+let maps = {}; // Store leafet map instances
 
 document.addEventListener('DOMContentLoaded', async () => {
     // 1. Setup Tab Interactions
@@ -8,8 +10,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 2. Load Data
     try {
         // Prevent browser caching the old data.json by appending a timestamp query string
-        const response = await fetch('data.json?v=' + new Date().getTime());
-        globalData = await response.json();
+        const v = new Date().getTime();
+        const [resData, resGeo] = await Promise.all([
+            fetch('data.json?v=' + v),
+            fetch('concepcion.geojson?v=' + v)
+        ]);
+
+        globalData = await resData.json();
+        globalGeojson = await resGeo.json();
 
         // Initialize the first tab (General) by default
         renderGeneralTab(globalData);
@@ -37,8 +45,14 @@ function setupTabs() {
             // Render specific tab content if not already rendered
             if (globalData) {
                 if (target === 'tab-general') renderGeneralTab(globalData);
-                if (target === 'tab-distritos') renderDistritosTab(globalData);
-                if (target === 'tab-laboral') renderLaboralTab(globalData);
+                if (target === 'tab-distritos') {
+                    renderDistritosTab(globalData);
+                    if (globalGeojson) renderMapDistritos(globalData, globalGeojson);
+                }
+                if (target === 'tab-laboral') {
+                    renderLaboralTab(globalData);
+                    if (globalGeojson) renderMapLaboral(globalData, globalGeojson);
+                }
             }
         });
     });
@@ -286,4 +300,166 @@ function renderLaboralTab(data) {
             }
         });
     }
+}
+
+// ----------------------------------------------------
+// MAP LOGIC
+// ----------------------------------------------------
+
+function getColorPop(d) {
+    return d > 50000 ? '#047857' : // emerald-700
+        d > 20000 ? '#10b981' : // emerald-500
+            d > 10000 ? '#34d399' : // emerald-400
+                d > 5000 ? '#6ee7b7' : // emerald-300
+                    '#a7f3d0';  // emerald-200
+}
+
+function renderMapDistritos(data, geojson) {
+    if (maps['distritos']) return;
+
+    // Create a dictionary for quick lookup O(1)
+    const distData = {};
+    data.distritos.forEach(d => {
+        distData[d.distrito] = d;
+    });
+
+    const map = L.map('map-distritos').setView([-23.1, -57.1], 7);
+    maps['distritos'] = map;
+
+    // Add a dark basemap pattern or simply rely on the background color if no tiles
+    // Usually a carto dark layer looks best:
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 20
+    }).addTo(map);
+
+    function style(feature) {
+        const info = distData[feature.properties.distrito];
+        const pop = info ? info.total : 0;
+        return {
+            fillColor: getColorPop(pop),
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: 0.7
+        };
+    }
+
+    function onEachFeature(feature, layer) {
+        const info = distData[feature.properties.distrito];
+        if (info) {
+            const popupContent = `
+                <div class="custom-popup">
+                    <strong>${feature.properties.distrito}</strong><br/>
+                    Población Total: ${info.total.toLocaleString('es-PY')}<br/>
+                    Hombres: ${info.hombres.toLocaleString('es-PY')}<br/>
+                    Mujeres: ${info.mujeres.toLocaleString('es-PY')}<br/>
+                    Edad Mediana: ${info.edad_mediana} años
+                </div>
+            `;
+            layer.bindPopup(popupContent);
+        }
+
+        layer.on({
+            mouseover: (e) => {
+                var layer = e.target;
+                layer.setStyle({
+                    weight: 3,
+                    color: '#f8fafc',
+                    dashArray: '',
+                    fillOpacity: 0.9
+                });
+                layer.bringToFront();
+            },
+            mouseout: (e) => {
+                geojsonLayer.resetStyle(e.target);
+            }
+        });
+    }
+
+    const geojsonLayer = L.geoJson(geojson, {
+        style: style,
+        onEachFeature: onEachFeature
+    }).addTo(map);
+
+    // Fit map bounds to the geojson layer
+    map.fitBounds(geojsonLayer.getBounds());
+}
+
+function getColorLab(d) {
+    return d > 70 ? '#1d4ed8' : // blue-700
+        d > 60 ? '#2563eb' : // blue-600
+            d > 50 ? '#3b82f6' : // blue-500
+                d > 40 ? '#60a5fa' : // blue-400
+                    '#93c5fd';  // blue-300
+}
+
+function renderMapLaboral(data, geojson) {
+    if (maps['laboral']) return;
+
+    const labData = {};
+    data.laboral.forEach(d => {
+        labData[d.distrito] = d;
+    });
+
+    // In a multi-tab setup, leafet map containers size might be 0 if initialized while hidden.
+    // Ensure the container is fully visible before initializing, or invalidateSize immediately.
+    setTimeout(() => {
+        const map = L.map('map-laboral').setView([-23.1, -57.1], 7);
+        maps['laboral'] = map;
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; CARTO',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+
+        function style(feature) {
+            const info = labData[feature.properties.distrito];
+            const tasa = info ? info.tasa_fuerza_trabajo : 0;
+            return {
+                fillColor: getColorLab(tasa),
+                weight: 2,
+                opacity: 1,
+                color: 'white',
+                dashArray: '3',
+                fillOpacity: 0.8
+            };
+        }
+
+        function onEachFeature(feature, layer) {
+            const info = labData[feature.properties.distrito];
+            if (info) {
+                const popupContent = `
+                    <div class="custom-popup">
+                        <strong>${feature.properties.distrito}</strong><br/>
+                        Tasa Fuerza Trabajo: ${info.tasa_fuerza_trabajo}%<br/>
+                        Fuerza de Trabajo: ${info.fuerza_trabajo.toLocaleString('es-PY')}<br/>
+                        Fuera de Fuerza: ${info.fuera_fuerza_trabajo.toLocaleString('es-PY')}
+                    </div>
+                `;
+                layer.bindPopup(popupContent);
+            }
+
+            layer.on({
+                mouseover: (e) => {
+                    var layer = e.target;
+                    layer.setStyle({ weight: 3, color: '#f8fafc', dashArray: '', fillOpacity: 1 });
+                    layer.bringToFront();
+                },
+                mouseout: (e) => {
+                    geojsonLayer.resetStyle(e.target);
+                }
+            });
+        }
+
+        const geojsonLayer = L.geoJson(geojson, {
+            style: style,
+            onEachFeature: onEachFeature
+        }).addTo(map);
+
+        map.fitBounds(geojsonLayer.getBounds());
+    }, 100);
 }
