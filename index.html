@@ -1,67 +1,155 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demografía Concepción - Dashboard</title>
+    <title>Demografía y Laboral - Concepción</title>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@500;700&display=swap"
+        rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="dashboard-container">
         <!-- Header -->
-        <header class="glassmorphism">
-            <h1>📊 Demografía Concepción</h1>
-            <p>Proyecciones y Datos Censales 2022</p>
+        <header class="glassmorphism float-anim">
+            <h1>🚀 Demografía y Actividad Laboral</h1>
+            <p>Departamento de Concepción - Proyecciones y Datos Censales 2022</p>
         </header>
 
-        <!-- Key Metrics Cards -->
-        <section class="metrics-grid">
-            <div class="card metric-card glassmorphism float-anim">
-                <h3>Total Población</h3>
-                <h2 id="total-pop">...</h2>
-                <div class="icon">👥</div>
-            </div>
-            <div class="card metric-card glassmorphism float-anim" style="animation-delay: 0.1s;">
-                <h3>Total Hombres</h3>
-                <h2 id="total-hombres">...</h2>
-                <div class="progress-bar"><div id="bar-hombres" class="progress fill-m"></div></div>
-            </div>
-            <div class="card metric-card glassmorphism float-anim" style="animation-delay: 0.2s;">
-                <h3>Total Mujeres</h3>
-                <h2 id="total-mujeres">...</h2>
-                <div class="progress-bar"><div id="bar-mujeres" class="progress fill-f"></div></div>
-            </div>
-        </section>
+        <!-- Tabs Navigation -->
+        <nav class="tabs-nav glassmorphism float-anim" style="animation-delay: 0.1s;">
+            <button class="tab-btn active" data-tab="tab-general">🌎 Demografía General</button>
+            <button class="tab-btn" data-tab="tab-distritos">📍 Datos Distritales</button>
+            <button class="tab-btn" data-tab="tab-laboral">💼 Actividad Laboral</button>
+        </nav>
 
-        <!-- Charts Section -->
-        <section class="charts-grid">
-            <!-- Population Pyramid -->
-            <div class="card chart-card glassmorphism">
-                <h3>Pirámide Poblacional por Edad y Sexo</h3>
-                <div class="chart-wrapper">
-                    <canvas id="pyramidChart"></canvas>
+        <!-- TAB 1: General Demography -->
+        <div id="tab-general" class="tab-content active">
+            <!-- Key Metrics Cards -->
+            <section class="metrics-grid">
+                <div class="card metric-card glassmorphism float-anim" style="animation-delay: 0.2s;">
+                    <h3>Total Población</h3>
+                    <h2 id="total-pop">...</h2>
+                    <div class="icon">👥</div>
                 </div>
-            </div>
-            
-            <!-- Distribution Chart -->
-            <div class="card chart-card glassmorphism">
-                <h3>Distribución de Sexo</h3>
-                <div class="chart-wrapper">
-                    <canvas id="doughnutChart"></canvas>
+                <div class="card metric-card glassmorphism float-anim" style="animation-delay: 0.3s;">
+                    <h3>Total Hombres</h3>
+                    <h2 id="total-hombres">...</h2>
+                    <div class="progress-bar">
+                        <div id="bar-hombres" class="progress fill-m"></div>
+                    </div>
                 </div>
-            </div>
-        </section>
+                <div class="card metric-card glassmorphism float-anim" style="animation-delay: 0.4s;">
+                    <h3>Total Mujeres</h3>
+                    <h2 id="total-mujeres">...</h2>
+                    <div class="progress-bar">
+                        <div id="bar-mujeres" class="progress fill-f"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-grid">
+                <!-- Population Pyramid -->
+                <div class="card chart-card glassmorphism float-anim" style="animation-delay: 0.5s;">
+                    <h3>Pirámide Poblacional por Edad y Sexo</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="pyramidChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Distribution Chart -->
+                <div class="card chart-card glassmorphism float-anim" style="animation-delay: 0.6s;">
+                    <h3>Distribución de Sexo</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="doughnutChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- TAB 2: District Data -->
+        <div id="tab-distritos" class="tab-content">
+            <section class="metrics-grid distritos-metrics">
+                <div class="card metric-card glassmorphism">
+                    <h3>Edad Mediana (Dept.)</h3>
+                    <h2 id="mediana-dept">...</h2>
+                    <div class="icon">🎂</div>
+                </div>
+                <div class="card metric-card glassmorphism">
+                    <h3>Distrito más poblado</h3>
+                    <h2 id="max-pop-dist" class="text-md">...</h2>
+                    <div class="icon">🏙️</div>
+                </div>
+            </section>
+            <section class="charts-grid-full">
+                <div class="card chart-card glassmorphism">
+                    <h3>Población Total por Distrito</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="distritosBarChart"></canvas>
+                    </div>
+                </div>
+            </section>
+            <section class="charts-grid-full">
+                <div class="card chart-card glassmorphism">
+                    <h3>Edad Mediana por Distrito</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="distritosLineChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- TAB 3: Labor Activity -->
+        <div id="tab-laboral" class="tab-content">
+            <section class="metrics-grid">
+                <div class="card metric-card glassmorphism">
+                    <h3>Fuerza de Trabajo (Total)</h3>
+                    <h2 id="total-ft">...</h2>
+                    <div class="progress-bar">
+                        <div id="bar-ft" class="progress fill-accent"></div>
+                    </div>
+                </div>
+                <div class="card metric-card glassmorphism">
+                    <h3>Fuera de Fuerza de Trabajo</h3>
+                    <h2 id="total-fft">...</h2>
+                    <div class="progress-bar">
+                        <div id="bar-fft" class="progress fill-warning"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="charts-grid-full">
+                <div class="card chart-card glassmorphism">
+                    <h3>Condición de Actividad por Distrito (15+ años)</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="laboralStackedChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section class="charts-grid-full">
+                <div class="card chart-card glassmorphism">
+                    <h3>Tasa de Fuerza de Trabajo (%)</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="laboralTasaChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
 
         <footer class="glassmorphism">
-            <p>Datos extraídos de proyecciones demográficas del INE. Desarrollado para Paracel S.A.</p>
+            <p>Datos extraídos del INE. Proyecto desarrollado para uso interno - Paracel S.A.</p>
         </footer>
     </div>
 
-    <!-- Application Script -->
     <script src="app.js"></script>
 </body>
+
 </html>
